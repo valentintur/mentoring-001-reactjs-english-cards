@@ -25,7 +25,8 @@ class App extends React.Component {
       id : 1 + this.state.id,
       value : {
         word : this.state.word.slice(),
-        translate : this.state.translate.slice()
+        translate : this.state.translate.slice(),
+        overturned : false
       }
     }
 
@@ -37,20 +38,34 @@ class App extends React.Component {
     })
   }
 
+  turnCard(id) {
+    const cards = [...this.state.cards];
+
+    let index = cards.findIndex((card) => {
+      return card.id === id
+    })
+
+    cards[index].value.overturned = !cards[index].value.overturned;
+
+    this.updateInput('cards', cards);
+  }
+
   render() {
     return (
+
       <div className="App">
         <h1 className="app-title">English cards</h1>
         <div className="container">
+          <div className="sub-title">Dodaj kartę...</div>
           <input
             type="text"
-            placeholder="Wpisz słowo"
+            placeholder="Wpisz słowo po angielsku"
             value={this.state.word}
             onChange={(e) => this.updateInput('word', e.target.value)}
           />
           <input
             type="text"
-            placeholder="Wpisz tłumaczenie"
+            placeholder="Wpisz słowo po polsku"
             value={this.state.translate}
             onChange={(e) => this.updateInput('translate', e.target.value)}
           />
@@ -60,6 +75,19 @@ class App extends React.Component {
           >
             Dodać
           </button>
+
+          <div>{this.state.cards.map(card => {
+            return(
+              <div
+                key={card.id}
+                className={"card" + (card.value.overturned ? " overturned" : "")}
+                onClick={() => this.turnCard(card.id)}
+              >
+                {card.value.overturned ? card.value.translate : card.value.word}
+              </div>
+            )
+          })}</div>
+
         </div>
       </div>
     );
